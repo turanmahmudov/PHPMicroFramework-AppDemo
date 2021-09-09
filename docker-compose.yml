@@ -1,0 +1,71 @@
+version: '3.7'
+
+networks:
+  mynet:
+
+volumes:
+  logs:
+    driver: local
+  phpmyadmin_data:
+  mysql_data:
+
+services:
+  mysql:
+    container_name: simplerest-mysql
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: simplerestdemo
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql/
+    networks:
+      - mynet
+
+  php:
+    container_name: simplerest-php
+    build:
+      dockerfile: ./docker/php/Dockerfile
+      context: ./
+    working_dir: /var/www
+    command: php -S 0.0.0.0:8080 -t public
+    depends_on:
+      - mysql
+      - phpmyadmin
+    links:
+      - mysql
+    environment:
+      docker: "true"
+      APP_ENV: dev
+      DB_CONNECTION: mysql
+      DB_USERNAME: admin
+      DB_PASSWORD: password
+      DB_DATABASE: simplerestdemo
+      DB_HOST: 0.0.0.0
+      DB_PORT: 3306
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/var/www
+      - logs:/var/www/logs
+    networks:
+      - mynet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    volumes:
+      - phpmyadmin_data:/var/www/html/
+    ports:
+      - "127.0.0.1:8000:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: password
+    networks:
+      - mynet
+    depends_on:
+      - mysql
+    links:
+      - mysql
