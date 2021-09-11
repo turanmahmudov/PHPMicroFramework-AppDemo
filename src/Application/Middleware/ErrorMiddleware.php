@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Middleware;
 
+use App\Domain\Exception\PostNotFoundException;
+use App\Domain\Exception\RepositoryException;
 use Framework\Http\Exception\MethodNotAllowedException;
 use Framework\Http\Exception\NotFoundException;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -36,6 +38,28 @@ class ErrorMiddleware implements \Psr\Http\Server\MiddlewareInterface
             ];
 
             $response = $this->responseFactory->createResponse($exception->getStatusCode(), $exception->getMessage());
+            $response->getBody()->write(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            return $response->withHeader('Content-Type', 'application/json');
+        } catch (PostNotFoundException $exception) {
+            $result = [
+                'code' => 404,
+                'status' => $exception->getMessage(),
+                'data' => [],
+            ];
+
+            $response = $this->responseFactory->createResponse(404, $exception->getMessage());
+            $response->getBody()->write(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            return $response->withHeader('Content-Type', 'application/json');
+        } catch (RepositoryException $exception) {
+            $result = [
+                'code' => 500,
+                'status' => $exception->getMessage(),
+                'data' => [],
+            ];
+
+            $response = $this->responseFactory->createResponse(500, $exception->getMessage());
             $response->getBody()->write(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             return $response->withHeader('Content-Type', 'application/json');

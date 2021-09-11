@@ -14,15 +14,16 @@ use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 
-class Create extends PostAction
+class Update extends PostAction
 {
-    protected array $scope = ['post.all', 'post.create'];
-    protected string $errorMessage = 'Token not allowed to create posts';
+    protected array $scope = ['post.all', 'post.update'];
+    protected string $errorMessage = 'Token not allowed to update posts';
 
     /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param PostValidator $postValidator
+     * @param array $args
      * @return ResponseInterface
      * @throws RepositoryException
      * @throws BadRequestException
@@ -30,8 +31,17 @@ class Create extends PostAction
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        PostValidator $postValidator
+        PostValidator $postValidator,
+        array $args = []
     ): ResponseInterface {
+        $uuid = $args['id'];
+
+        try {
+            $post = $this->postRepository->getById($uuid);
+        } catch (RepositoryException $exception) {
+            throw $exception;
+        }
+
         $data = $request->getParsedBody() ?: [];
 
         $validation = $postValidator->validate($data);
@@ -39,20 +49,14 @@ class Create extends PostAction
             throw new BadRequestException(implode(', ', $validation->getMessages()));
         }
 
-        $uuid = Uuid::uuid4();
-        $createdAt = (new DateTime())->format('Y-m-d H:i:s');
         $postData = [
             'id' => $uuid,
             'title' => $data['title'],
-            'content' => $data['content'],
-            'created_at' => $createdAt,
-            'updated_at' => $createdAt
+            'content' => $data['content']
         ];
-        $post = $this->hydrator->hydrate(
-            $postData,
-            (new ReflectionClass(Post::class))->newInstanceWithoutConstructor()
-        );
-        $this->postRepository->save($post);
+        $post = $this->hydrator->hydrate($postData, $post);
+        $post->touch();
+        $this->postRepository->update($post);
 
         $response->getBody()->write(json_encode($post, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
         return $response->withStatus(200)

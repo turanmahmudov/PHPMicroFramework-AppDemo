@@ -14,6 +14,7 @@ use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Laminas\Hydrator\HydratorInterface;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 use function Functional\map;
 
 class PostRepository extends AbstractRepository implements PostRepositoryInterface
@@ -40,10 +41,9 @@ class PostRepository extends AbstractRepository implements PostRepositoryInterfa
 
     public function update(Post $post): void
     {
-        $postValues = $post->jsonSerialize();
-        unset($postValues['id']);
+        $data = $this->hydrator->extract($post);
 
-        if (!Capsule::table('posts')->where('id', $post->getId())->update($postValues)) {
+        if (!Capsule::table('posts')->where('id', $post->getId())->update($data)) {
             throw new RepositoryException('Post is not updated');
         }
     }
@@ -67,7 +67,7 @@ class PostRepository extends AbstractRepository implements PostRepositoryInterfa
             return map($posts, function ($post) {
                 return $this->hydrator->hydrate(
                     (array) $post,
-                    (new \ReflectionClass(Post::class))->newInstanceWithoutConstructor()
+                    (new ReflectionClass(Post::class))->newInstanceWithoutConstructor()
                 );
             });
         } catch (Exception $exception) {
@@ -83,7 +83,7 @@ class PostRepository extends AbstractRepository implements PostRepositoryInterfa
 
         return $this->hydrator->hydrate(
             (array) $post,
-            (new \ReflectionClass(Post::class))->newInstanceWithoutConstructor()
+            (new ReflectionClass(Post::class))->newInstanceWithoutConstructor()
         );
     }
 }
