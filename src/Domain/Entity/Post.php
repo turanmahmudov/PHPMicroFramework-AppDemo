@@ -47,6 +47,9 @@ class Post implements JsonSerializable
         $this->id = $id;
         $this->title = $title;
         $this->content = $content;
+
+        $this->createdAt = new DateTime;
+        $this->updatedAt = $this->createdAt;
     }
 
     /**

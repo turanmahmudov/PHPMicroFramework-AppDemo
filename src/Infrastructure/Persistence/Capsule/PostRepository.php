@@ -12,6 +12,7 @@ use App\Domain\Repository\PostRepositoryInterface;
 use App\Infrastructure\Persistence\Capsule\Helper\FilterQueryBuilder;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\QueryException;
 use Laminas\Hydrator\HydratorInterface;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -34,8 +35,10 @@ class PostRepository extends AbstractRepository implements PostRepositoryInterfa
     {
         $data = $this->hydrator->extract($post);
 
-        if (!Capsule::table('posts')->insert($data)) {
-            throw new RepositoryException('Post is not saved.');
+        try {
+            Capsule::table('posts')->insert($data);
+        } catch (QueryException $e) {
+            throw new RepositoryException('Post is not saved: ' . $e->getMessage());
         }
     }
 
@@ -43,19 +46,23 @@ class PostRepository extends AbstractRepository implements PostRepositoryInterfa
     {
         $data = $this->hydrator->extract($post);
 
-        if (!Capsule::table('posts')->where('id', $post->getId())->update($data)) {
-            throw new RepositoryException('Post is not updated');
+        try {
+            Capsule::table('posts')->where('id', $post->getId())->update($data);
+        } catch (QueryException $e) {
+            throw new RepositoryException('Post is not updated: ' . $e->getMessage());
         }
     }
 
     public function delete(Post $post): void
     {
-        if (!Capsule::table('posts')->delete($post->getId())) {
-            throw new RepositoryException('Post is not deleted');
+        try {
+            Capsule::table('posts')->delete($post->getId());
+        } catch (QueryException $e) {
+            throw new RepositoryException('Post is not deleted: ' . $e->getMessage());
         }
     }
 
-    public function getAll(int $page, int $limit, ?string $filter): array
+    public function getAll(int $page = 1, int $limit = 10, ?string $filter = null): array
     {
         try {
             $offset = ($page - 1) * $limit;
