@@ -22,11 +22,7 @@ class Get extends PostAction
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args = []): ResponseInterface
     {
-        try {
-            $post = $this->postRepository->getById($args['id']);
-        } catch (RepositoryException $exception) {
-            throw $exception;
-        }
+        $post = $this->postRepository->getById($args['id']);
 
         $response->getBody()->write(json_encode($post, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
         return $response->withStatus(200)

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Application\Middleware\FilterMiddleware;
 use App\Application\Middleware\PaginationMiddleware;
 use App\Application\Middleware\PayloadMiddleware;
-use App\Application\Middleware\UuidMiddleware;
 use Framework\Application;
 use Psr\Container\ContainerInterface;
 

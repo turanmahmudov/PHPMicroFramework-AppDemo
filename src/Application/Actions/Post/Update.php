@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\Post;
 
-use App\Domain\Entity\Post;
 use App\Domain\Exception\RepositoryException;
 use App\Domain\Validation\PostValidator;
-use DateTime;
 use Framework\Http\Exception\BadRequestException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Ramsey\Uuid\Uuid;
-use ReflectionClass;
 
 class Update extends PostAction
 {
@@ -36,11 +32,7 @@ class Update extends PostAction
     ): ResponseInterface {
         $uuid = $args['id'];
 
-        try {
-            $post = $this->postRepository->getById($uuid);
-        } catch (RepositoryException $exception) {
-            throw $exception;
-        }
+        $post = $this->postRepository->getById($uuid);
 
         $data = $request->getParsedBody() ?: [];
 

@@ -10,8 +10,6 @@ use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\Strategy\ClosureStrategy;
 use Laminas\Hydrator\Strategy\DateTimeFormatterStrategy;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidFactory;
-use Ramsey\Uuid\UuidInterface;
 
 class PostHydratorFactory
 {

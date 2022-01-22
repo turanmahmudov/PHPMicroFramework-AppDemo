@@ -8,17 +8,10 @@
             "email": "turan.mahmudov@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "git",
-            "url":  "https://github.com/turanmahmudov/PHPMicroFramework.git"
-        }
-    ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8.0",
         "psr/http-server-middleware": "^1.0",
         "doctrine/annotations": "^1.13",
-        "turanmahmudov/php-micro-framework": "dev-main",
         "vlucas/phpdotenv": "^5.3",
         "hassankhan/config": "^2.2",
         "php-di/php-di": "^6.3",
@@ -30,7 +23,8 @@
         "tuupola/slim-jwt-auth": "^3.5",
         "laminas/laminas-hydrator": "^4.3",
         "lstrojny/functional-php": "^1.17",
-        "robmorgan/phinx": "^0.12.8"
+        "robmorgan/phinx": "^0.12.8",
+        "turanmahmudov/php-micro-framework": "dev-main"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.94",

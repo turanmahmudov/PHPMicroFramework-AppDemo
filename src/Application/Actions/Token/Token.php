@@ -12,7 +12,7 @@ use Ramsey\Uuid\Uuid;
 
 class Token
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $requested_scopes = $request->getParsedBody() ?: [];
 
@@ -44,7 +44,7 @@ class Token
         ];
 
         $secret = getenv("JWT_SECRET");
-        $token = JWT::encode($payload, $secret, "HS256");
+        $token = JWT::encode($payload, $secret);
 
         $data["token"] = $token;
         $data["expires"] = $future->getTimeStamp();

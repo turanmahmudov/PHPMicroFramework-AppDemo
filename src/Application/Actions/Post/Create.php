@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
+use ReflectionException;
 
 class Create extends PostAction
 {
@@ -25,7 +26,7 @@ class Create extends PostAction
      * @param PostValidator $postValidator
      * @return ResponseInterface
      * @throws RepositoryException
-     * @throws BadRequestException
+     * @throws BadRequestException|ReflectionException
      */
     public function __invoke(
         ServerRequestInterface $request,

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\Post;
 
-use App\Domain\Exception\PostNotFoundException;
 use App\Domain\Exception\RepositoryException;
 use App\Domain\Validation\PostValidator;
 use Psr\Http\Message\ResponseInterface;

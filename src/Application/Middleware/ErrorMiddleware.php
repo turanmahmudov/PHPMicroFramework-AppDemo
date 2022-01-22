@@ -6,15 +6,15 @@ namespace App\Application\Middleware;
 
 use App\Domain\Exception\PostNotFoundException;
 use App\Domain\Exception\RepositoryException;
-use Framework\Http\Exception\MethodNotAllowedException;
-use Framework\Http\Exception\NotFoundException;
+use Framework\Http\Exception;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
-class ErrorMiddleware implements \Psr\Http\Server\MiddlewareInterface
+class ErrorMiddleware implements MiddlewareInterface
 {
     protected ResponseFactoryInterface $responseFactory;
 
@@ -30,7 +30,7 @@ class ErrorMiddleware implements \Psr\Http\Server\MiddlewareInterface
     {
         try {
             return $handler->handle($request);
-        } catch (NotFoundException | MethodNotAllowedException $exception) {
+        } catch (Exception $exception) {
             $result = [
                 'code' => $exception->getStatusCode(),
                 'status' => $exception->getMessage(),

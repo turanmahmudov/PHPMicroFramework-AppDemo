@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 
 class CapsuleFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): Capsule
     {
         $dbConfig = $container->get('config')['db'];
         $connectionConfig = $dbConfig['connections'][$dbConfig['default']];

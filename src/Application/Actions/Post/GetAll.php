@@ -25,11 +25,7 @@ class GetAll extends PostAction
         $limit = $request->getAttribute('limit');
         $filter = $request->getAttribute('filter');
 
-        try {
-            $posts = $this->postRepository->getAll($page, $limit, $filter);
-        } catch (RepositoryException $exception) {
-            throw $exception;
-        }
+        $posts = $this->postRepository->getAll($page, $limit, $filter);
 
         $response->getBody()->write(json_encode($posts, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
         return $response->withStatus(200)

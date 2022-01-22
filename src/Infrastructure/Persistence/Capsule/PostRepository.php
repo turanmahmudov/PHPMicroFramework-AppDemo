@@ -16,6 +16,7 @@ use Illuminate\Database\QueryException;
 use Laminas\Hydrator\HydratorInterface;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use ReflectionException;
 use function Functional\map;
 
 class PostRepository extends AbstractRepository implements PostRepositoryInterface
@@ -82,6 +83,10 @@ class PostRepository extends AbstractRepository implements PostRepositoryInterfa
         }
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws PostNotFoundException
+     */
     public function getById(string $id): Post
     {
         $post = Capsule::table('posts')->find($id);

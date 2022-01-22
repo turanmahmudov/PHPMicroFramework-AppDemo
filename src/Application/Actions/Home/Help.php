@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\Home;
 
-use App\Application\Actions\Action;
+use Psr\Http\Message\ResponseInterface;
 
-class Help extends Action
+class Help
 {
-    public function __invoke()
+    public function __invoke(ResponseInterface $response): ResponseInterface
     {
         $endpoints = [
             'posts' => '/api/v1/posts',
             'users' => '/api/v1/users',
-            'docs' => '/docs',
+            'info' => '/info',
+            'token' => '/token',
             'help' => '/',
         ];
 
@@ -23,6 +24,8 @@ class Help extends Action
             'timestamp' => time(),
         ];
 
-        return $this->respondWithJson('success', $message, 200);
+        $response->getBody()->write(json_encode($message, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        return $response->withStatus(200)
+            ->withHeader('Content-Type', 'application/json');
     }
 }
